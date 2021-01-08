@@ -19,5 +19,5 @@ Images: https://hub.docker.com/r/eum814/deep_env
 
 #### NOTE:
 
-- To activate SSH remote function, please first publish the available port on the Docker host and map it to port 22 in the container (e.g. `-p 10022:22`).  ~~Then add command `/etc/init.d/ssh restart` when running the image~~. And you can test the internal container connection with root user by tapping `ssh root@docker-host-ip -p 10022`
+- To activate SSH remote function, please first publish the available port on the Docker host and map it to port 22 in the container (e.g. `-p 10022:22`).  Then add command `/etc/init.d/ssh restart` when running the image. And you can test the internal container connection with root user by tapping `ssh root@docker-host-ip -p 10022`  The user password can refer to the  ssh configurations in Dockerfile.
 
