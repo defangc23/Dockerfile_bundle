@@ -88,6 +88,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         redis \
         flask \
         cupy-cuda100 \
+        ray \
         && \
 
     apt-get update -y && \
