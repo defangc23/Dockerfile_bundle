@@ -72,7 +72,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.2-Linux-x86_64.sh && \
     bash Miniconda3-py38_4.8.2-Linux-x86_64.sh -p /miniconda -b && \
     rm -rf Miniconda3-py38_4.8.2-Linux-x86_64.sh && \
-    conda config --set auto_activate_base false && \
 
 # ==================================================================
 # SSH
@@ -94,6 +93,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
 ENV PATH=/miniconda/bin:${PATH}
+ENV PYTHONPATH=/usr/local/bin/python
 RUN conda update -y conda
 ENV NOTVISIBLE="in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
