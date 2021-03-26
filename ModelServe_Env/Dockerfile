@@ -91,10 +91,10 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
-
-ENV PATH=/miniconda/bin:${PATH}
-ENV PYTHONPATH=/usr/local/bin/python
+    
 RUN conda update -y conda
+ENV PATH=/miniconda/bin/conda:${PATH}
+ENV PYTHONPATH=/usr/local/bin/python
 ENV NOTVISIBLE="in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
