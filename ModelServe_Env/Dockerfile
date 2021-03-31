@@ -2,7 +2,6 @@
 # module list
 # ------------------------------------------------------------------
 # python           3.8
-# ray serve        1.2.0
 # miniconda        3.8
 # ==================================================================
 
@@ -10,6 +9,7 @@ FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
 ENV LANG C.UTF-8
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    GIT_CLONE="git clone --depth 10" && \
 
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
@@ -32,7 +32,15 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         curl \
         unzip \
         unrar \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
         && \
+
+    $GIT_CLONE https://github.com/Kitware/CMake ~/cmake && \
+    cd ~/cmake && \
+    ./bootstrap && \
+    make -j"$(nproc)" install && \
 
 # ==================================================================
 # python
@@ -55,14 +63,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     ln -s /usr/bin/python3.8 /usr/local/bin/python && \
    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
    pip config set global.trusted-host mirrors.aliyun.com && \
-
-# ==================================================================
-# ray serve
-# ------------------------------------------------------------------
-
-    $PIP_INSTALL \
-    ray[serve]==1.2.0 \
-    && \
 
 # ==================================================================
 # miniconda
@@ -92,9 +92,19 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
-ENV PATH=/miniconda/bin/conda:${PATH}
-RUN conda update -y conda
-ENV PYTHONPATH=/usr/local/bin/python
+ENV PATH=/miniconda/bin/:${PATH}
+RUN conda update -y conda && \
+    conda init bash && \
+    source ~/.bashrc && \
+    conda deactivate && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/linux-64/ && \
+    conda config --set show_channel_urls yes && \
+    conda config --set auto_activate_base false && \
+
+
 ENV NOTVISIBLE="in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
