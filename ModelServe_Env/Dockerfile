@@ -1,11 +1,12 @@
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# python           3.8
+# python           3.6
 # miniconda        3.8
+# ray              2.0.0 dev0
 # ==================================================================
 
-FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 ENV LANG C.UTF-8
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
@@ -32,9 +33,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         curl \
         unzip \
         unrar \
-        ffmpeg \
-        libsm6 \
-        libxext6 \
         && \
 
     $GIT_CLONE https://github.com/Kitware/CMake ~/cmake && \
@@ -52,17 +50,24 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        python3.8 \
-        python3.8-dev \
-        python3-distutils \
+        python3.6 \
+        python3.6-dev \
+        python3-distutils-extra \
         && \
     wget -O ~/get-pip.py \
         https://bootstrap.pypa.io/get-pip.py && \
-    python3.8 ~/get-pip.py && \
-    ln -s /usr/bin/python3.8 /usr/local/bin/python3 && \
-    ln -s /usr/bin/python3.8 /usr/local/bin/python && \
-   pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
-   pip config set global.trusted-host mirrors.aliyun.com && \
+    python3.6 ~/get-pip.py && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+    pip config set global.trusted-host mirrors.aliyun.com && \
+
+# ==================================================================
+# Ray  (nightly v2.0.0 dev0)
+# ------------------------------------------------------------------
+    pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
+
+
 
 # ==================================================================
 # miniconda
@@ -95,8 +100,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 ENV PATH=/miniconda/bin/:${PATH}
 RUN conda update -y conda && \
     conda init bash && \
-    source ~/.bashrc && \
-    conda deactivate && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ && \
