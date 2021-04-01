@@ -1,7 +1,6 @@
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# python           3.6
 # miniconda        3.8
 # ray              2.0.0 dev0
 # ==================================================================
@@ -40,34 +39,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     ./bootstrap && \
     make -j"$(nproc)" install && \
 
-# ==================================================================
-# python
-# ------------------------------------------------------------------
-
-    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        software-properties-common \
-        && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        python3.6 \
-        python3.6-dev \
-        python3-distutils-extra \
-        && \
-    wget -O ~/get-pip.py \
-        https://bootstrap.pypa.io/get-pip.py && \
-    python3.6 ~/get-pip.py && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
-    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
-    pip config set global.trusted-host mirrors.aliyun.com && \
-
-# ==================================================================
-# Ray  (nightly v2.0.0 dev0)
-# ------------------------------------------------------------------
-    pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
-
-
 
 # ==================================================================
 # miniconda
@@ -76,7 +47,20 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     wget \
     https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.2-Linux-x86_64.sh && \
     bash Miniconda3-py38_4.8.2-Linux-x86_64.sh -p /miniconda -b && \
-    rm -rf Miniconda3-py38_4.8.2-Linux-x86_64.sh && \
+    rm -rf Miniconda3-py38_4.8.2-Linux-x86_64.sh
+ENV PATH=/miniconda/bin/:${PATH}
+RUN conda update -y conda && \
+    conda init bash && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/linux-64/ && \
+    conda config --set show_channel_urls yes && \
+    conda config --set auto_activate_base false
+RUN conda create -y -n modelserve python=3.6.12
+SHELL ["conda", "run", "-n", "modelserve", "/bin/bash", "-c"]
+RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
+
 
 # ==================================================================
 # SSH
@@ -96,16 +80,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
-
-ENV PATH=/miniconda/bin/:${PATH}
-RUN conda update -y conda && \
-    conda init bash && \
-    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
-    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
-    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ && \
-    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/linux-64/ && \
-    conda config --set show_channel_urls yes && \
-    conda config --set auto_activate_base false
 
 
 ENV NOTVISIBLE="in users profile"
