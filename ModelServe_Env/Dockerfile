@@ -105,7 +105,7 @@ RUN conda update -y conda && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/ && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/linux-64/ && \
     conda config --set show_channel_urls yes && \
-    conda config --set auto_activate_base false && \
+    conda config --set auto_activate_base false
 
 
 ENV NOTVISIBLE="in users profile"
