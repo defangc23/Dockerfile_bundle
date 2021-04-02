@@ -57,9 +57,11 @@ RUN conda update -y conda && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/linux-64/ && \
     conda config --set show_channel_urls yes && \
     conda config --set auto_activate_base false
-RUN conda create -y -n modelserve python=3.6.12
-SHELL ["conda", "run", "-n", "modelserve", "/bin/bash", "-c"]
+RUN conda create -y -n AlgoExample python=3.6.12
+SHELL ["conda", "run", "-n", "AlgoExample", "/bin/bash", "-c"]
 RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
+    pip install pydantic && \
+    pip install uvicorn && \
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
     pip config set global.trusted-host mirrors.aliyun.com && \
 
