@@ -62,6 +62,7 @@ SHELL ["conda", "run", "-n", "AlgoExample", "/bin/bash", "-c"]
 RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
     pip install pydantic && \
     pip install uvicorn && \
+    pip install starlette && \
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
     pip config set global.trusted-host mirrors.aliyun.com && \
 
