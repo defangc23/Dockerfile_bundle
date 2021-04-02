@@ -32,6 +32,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         curl \
         unzip \
         unrar \
+        ffmpeg libsm6 libxext6 \
         && \
 
     $GIT_CLONE https://github.com/Kitware/CMake ~/cmake && \
