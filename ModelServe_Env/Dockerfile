@@ -60,7 +60,7 @@ RUN conda update -y conda && \
     conda config --set auto_activate_base false
 RUN conda create -y -n AlgoExample python=3.6.12
 SHELL ["conda", "run", "-n", "AlgoExample", "/bin/bash", "-c"]
-RUN pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl && \
+RUN pip install -U ray==1.3.0 && \
     pip install pydantic && \
     pip install uvicorn && \
     pip install starlette && \
